@@ -18,7 +18,7 @@ export const createPayment = async (req, res) => {
     const {
       orderId,
       amount,
-      currency = 'usd',
+      currency = 'rwf', // Changed default to RWF
       productName = 'Product Purchase',
       productDescription = 'Order payment',
       quantity = 1,
@@ -48,7 +48,9 @@ export const createPayment = async (req, res) => {
     console.log('Found order:', order._id);
 
     const paymentAmount = amount || order.totalPrice;
-    
+    // Stripe expects the amount in the smallest currency unit (centimes for RWF),
+    // but if your price is already in RWF (not centimes), do NOT multiply by 100.
+    // So, use paymentAmount directly:
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
@@ -56,12 +58,12 @@ export const createPayment = async (req, res) => {
       line_items: [
         {
           price_data: {
-            currency: currency.toLowerCase(),
+            currency: 'rwf',
             product_data: {
               name: productName,
               description: productDescription,
             },
-            unit_amount: Math.round(paymentAmount * 100),
+            unit_amount: Math.round(paymentAmount), // Use as-is, no *100
           },
           quantity: quantity,
         },
@@ -81,7 +83,7 @@ export const createPayment = async (req, res) => {
     order.paymentInfo.stripeSessionId = session.id;
     order.paymentInfo.checkoutUrl = session.url;
     order.paymentInfo.paymentStatus = 'pending';
-    order.paymentInfo.currency = currency.toLowerCase();
+    order.paymentInfo.currency = 'rwf'; // Save as RWF
     order.paymentMethod = 'Credit Card';
     order.orderStatus = 'Payment Pending';
     
@@ -102,7 +104,7 @@ export const createPayment = async (req, res) => {
       url: session.url,
       orderId: order._id,
       amount: paymentAmount,
-      currency: currency,
+      currency: 'rwf',
       message: 'Payment session created successfully'
     });
 

@@ -21,7 +21,7 @@ var productSeeder = /*#__PURE__*/function () {
           _context.p = 0;
           _context.n = 1;
           return _User["default"].findOne({
-            email: "fidelniyomugabo67@gmail.com"
+            email: process.env.ADMIN_MAIL
           });
         case 1:
           admin = _context.v;

@@ -4,7 +4,7 @@ import User from "../models/User.js";
 
 const productSeeder = async () => {
   try {
-    const admin = await User.findOne({ email: "fidelniyomugabo67@gmail.com" });
+    const admin = await User.findOne({ email: process.env.ADMIN_MAIL });
     if (!admin) {
       console.log("❌ Admin not found. Seed admin first.");
       return;

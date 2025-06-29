@@ -91,7 +91,7 @@ var createOrder = exports.createOrder = /*#__PURE__*/function () {
           managerEmails = _context.v;
           recipients = [{
             name: "Admin super",
-            address: "fidelniyomugabo67@gmail.com"
+            address: process.env.ADMIN_MAIL
           }].concat(_toConsumableArray(managerEmails.map(function (manager) {
             return {
               name: "".concat(manager.firstname, " ").concat(manager.lastname),

@@ -5,14 +5,15 @@ import { BcryptUtil } from "../utils/bcryptjs.js";
 
 const seedData = async () => {
   try {
+    const adminEmail = process.env.ADMIN_MAIL;
     // ✅ Seed admin user
-    const existingAdmin = await User.findOne({ email: "fidelniyomugabo67@gmail.com" });
+    const existingAdmin = await User.findOne({ email: adminEmail });
     if (!existingAdmin) {
       const hashedPassword = await BcryptUtil.hash("adminPassword");
       const admin = await User.create({
         firstname: "admin",
         lastname: "super",
-        email: "fidelniyomugabo67@gmail.com",
+        email: adminEmail,
         role: "superAdmin",
         phoneNumber: "+250786639348",
         password: hashedPassword,

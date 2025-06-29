@@ -32,10 +32,10 @@ for (const envVar of requiredEnvVars) {
 // Initialize the express app
 const app = express();
 
+// IMPORTANT: Stripe webhook route must be defined BEFORE express.json() middleware
+// This is because Stripe webhooks need the raw body
 app.post('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
-// Middlewares
-app.use(cookieParser());
-app.use(bodyParser.json());
+
 // CORS configuration
 app.use(cors({
     origin: process.env.CLIENT_URL || "http://localhost:3000",
@@ -94,21 +94,16 @@ if (process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1);
 }
 
-// Middlewares
+// Basic middlewares
 app.use(cookieParser());
-app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: true }));
-
-// IMPORTANT: Stripe webhook route must be defined BEFORE express.json() middleware
-// This is because Stripe webhooks need the raw body
-app.use('/api/v1/stripe', stripeRoutes);
+app.use(morgan('combined'));
 
 // JSON parsing middleware (after Stripe webhook route)
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(morgan('combined'));
+
+// Stripe routes (must come before other routes that use express.json())
+app.use('/api/v1/stripe', stripeRoutes);
 
 // Session configuration
 app.use(
@@ -124,6 +119,7 @@ app.use(
     })
 );
 
+// Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -169,16 +165,20 @@ httpServer.listen(port, () => {
 });
 
 // Graceful shutdown
-const gracefulShutdown = (signal) => {
+const gracefulShutdown = async (signal) => {
     console.log(`\n${signal} received. Shutting down gracefully...`);
     
-    httpServer.close(() => {
+    httpServer.close(async () => {
         console.log('HTTP server closed');
         
-        mongoose.connection.close(() => {
+        try {
+            await mongoose.connection.close();
             console.log('MongoDB connection closed');
             process.exit(0);
-        });
+        } catch (err) {
+            console.error('Error closing MongoDB connection:', err);
+            process.exit(1);
+        }
     });
     
     // Force close after 10 seconds

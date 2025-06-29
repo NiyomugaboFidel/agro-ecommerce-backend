@@ -400,7 +400,7 @@ var requestManager = exports.requestManager = /*#__PURE__*/function () {
           link = "".concat(process.env.APP_URL, "/users/update-role/").concat(user._id);
           recipients = [{
             name: "Fidele Niyomugabo",
-            address: "fidelniyomugabo67@gmail.com"
+            address: process.env.ADMIN_MAIL
           }];
           data = {
             htmlMessage: "\n        <div style=\"font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9;\">\n          <h2 style=\"font-size: 24px; color: #2c3e50; text-align: center; margin-bottom: 20px;\">requesting to be a manager</h2>\n          <div style=\"font-size: 18px; color: #333;\">\n            <p><strong>Full Name:</strong> ".concat(user.firstname, " ").concat(user.lastname, "</p>\n            <p><strong>Email:</strong> ").concat(user.email, "</p>\n            <p><strong>Phone:</strong> ").concat(user.phoneNumber, "</p>\n            <p><strong>Message:</strong></p>\n            <div style=\"background-color: #e8f4f8; padding: 15px; border-radius: 5px; border-left: 4px solid #3498db; margin-top: 10px;\">\n              ").concat(message, "\n            </div>\n          </div>\n          <div style=\"text-align: center; margin-top: 30px;\">\n            <a href=\"").concat(link, "\" style=\"text-decoration: none;\">\n              <button style=\"background-color: #3498db; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;\">\n                Update Role\n              </button>\n            </a>\n          </div>\n        </div>\n      ")

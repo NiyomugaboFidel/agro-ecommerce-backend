@@ -310,7 +310,7 @@ export const requestManager = async (req, res) => {
     const recipients = [
       {
         name: "Fidele Niyomugabo",
-        address: "fidelniyomugabo67@gmail.com",
+        address: process.env.ADMIN_MAIL,
       },
     ];
 

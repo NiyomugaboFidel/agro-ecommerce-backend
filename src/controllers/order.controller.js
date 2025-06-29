@@ -48,7 +48,7 @@ export const createOrder = async (req, res) => {
     }).select("email firstname lastname");
     
     const recipients = [
-      { name: "Admin super", address: "fidelniyomugabo67@gmail.com" },
+      { name: "Admin super", address: process.env.ADMIN_MAIL },
       ...managerEmails.map((manager) => ({
         name: `${manager.firstname} ${manager.lastname}`,
         address: manager.email,
